@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const linkRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
+
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
@@ -22,33 +24,33 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: String,
     required: true,
+    type: String,
     validate: {
-      validator(image) {
-        return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/.test(image);
+      validator(link) {
+        return linkRegex.test(link);
       },
-      message: (props) => `${props.value} ссылка некорректна`,
+      message: 'Введите корректный URL изображения',
     },
   },
   trailer: {
-    type: String,
     required: true,
+    type: String,
     validate: {
-      validator(trailer) {
-        return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/.test(trailer);
+      validator(link) {
+        return linkRegex.test(link);
       },
-      message: (props) => `${props.value} ссылка некорректна`,
+      message: 'Введите корректный URL трейлера',
     },
   },
   thumbnail: {
-    type: String,
     required: true,
+    type: String,
     validate: {
-      validator(thumbnail) {
-        return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/.test(thumbnail);
+      validator(link) {
+        return linkRegex.test(link);
       },
-      message: (props) => `${props.value} ссылка некорректна`,
+      message: 'Введите корректный URL изображения',
     },
   },
   owner: {
