@@ -11,18 +11,29 @@ require('dotenv').config();
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const myErrors = require('./middlewares/errors');
 
-const { PORT = 3001, DB_LOCAL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+dotenv.config();
+const {
+  NODE_ENV,
+  PORT = 3030,
+  DB_URL,
+} = process.env;
 
+const {
+  NODE_ENV,
+  PORT = 3030,
+  DB_URL,
+} = process.env;
 
 const app = express();
 
 app.use(helmet());
 app.use(cors());
 
-mongoose.connect(DB_LOCAL, {
+mongoose.connect(NODE_ENV === 'production' ? DB_URL : 'mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 });
 
 app.use(bodyParser.json());
