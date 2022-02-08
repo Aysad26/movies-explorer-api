@@ -5,6 +5,7 @@ const { errors } = require('celebrate');
 const cors = require('cors');
 const helmet = require('helmet');
 const limiter = require('./utils/rateLimiter');
+const corsOption = require('./middlewares/cors');
 
 require('dotenv').config();
 
@@ -27,7 +28,7 @@ const {
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOption));
 
 mongoose.connect(NODE_ENV === 'production' ? DB_URL : 'mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
