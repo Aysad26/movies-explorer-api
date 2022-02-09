@@ -1,31 +1,39 @@
 const express = require('express');
+const helmet = require('helmet');
+const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
-const cors = require('cors');
-const helmet = require('helmet');
-const limiter = require('./utils/rateLimiter');
-const corsOption = require('./middlewares/cors');
+const routes = require('./routes');
+const errorsHandler = require('./middlewares/errors');
+const limiter = require('./middlewares/rateLimiter');
+const {
+  requestLogger,
+  errorLogger,
+} = require('./middlewares/logger');
 
-require('dotenv').config();
-
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-const myErrors = require('./middlewares/errors');
-
-const { PORT = 3000, MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+dotenv.config();
+const {
+  NODE_ENV,
+  PORT = 3030,
+  DB_URL,
+} = process.env;
 
 const app = express();
-
 app.use(helmet());
-app.use(cors(corsOption));
 
-mongoose.connect(MONGO_URL, {
+mongoose.connect(NODE_ENV === 'production' ? DB_URL : 'mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
-  autoIndex: true,
 });
+
+app.use(cors({
+  origin: NODE_ENV === 'production' ? 'https://https://mesto.aysad26.nomoredomains.work' : 'http://localhost:3000',
+  credentials: true,
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -34,12 +42,11 @@ app.use(requestLogger);
 
 app.use(limiter);
 
-app.use('/', require('./routes'));
+app.use(routes);
 
 app.use(errorLogger);
+app.use(errors()); // обработчик ошибок celebrate
 
-app.use(errors());
+app.use(errorsHandler);
 
-app.use(myErrors);
-
-app.listen(PORT, () => PORT);
+app.listen(PORT);
