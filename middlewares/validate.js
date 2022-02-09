@@ -1,55 +1,55 @@
 const { celebrate, Joi } = require('celebrate');
 
-const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/;
+const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
 
-const validateMovieId = celebrate({
-  params: Joi.object().keys({
-    movieId: Joi.string().alphanum().length(24).hex(),
-  }),
-});
-
-const validateUserInfo = celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    name: Joi.string().required().min(2).max(30),
-  }),
-});
-
-const validateSignUp = celebrate({
+const signupValidate = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     email: Joi.string().required().email(),
-    password: Joi.string().required(),
+    password: Joi.string().required().min(8),
   }),
 });
 
-const validateSignIn = celebrate({
+const signinValidate = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required(),
+    password: Joi.string().required().min(8),
   }),
 });
 
-const validateMovie = celebrate({
+const moviesValidate = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
     duration: Joi.number().required(),
-    year: Joi.string().required(),
+    year: Joi.string().required().min(4).length(4),
     description: Joi.string().required(),
     image: Joi.string().required().pattern(regex),
     trailer: Joi.string().required().pattern(regex),
     thumbnail: Joi.string().required().pattern(regex),
-    movieId: Joi.number().required(),
+    movieId: Joi.number().positive().required().integer(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
 });
 
+const movieIdValidate = celebrate({
+  params: Joi.object().keys({
+    movieId: Joi.string().required().length(24).hex(),
+  }),
+});
+
+const patchUserValidate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    email: Joi.string().required().email(),
+  }),
+});
+
 module.exports = {
-  validateMovieId,
-  validateUserInfo,
-  validateSignUp,
-  validateSignIn,
-  validateMovie,
+  signupValidate,
+  signinValidate,
+  moviesValidate,
+  movieIdValidate,
+  patchUserValidate,
 };

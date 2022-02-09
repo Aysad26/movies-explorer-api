@@ -1,8 +1,3 @@
-require('dotenv').config();
+const DB_ADDRESS = 'mongodb://localhost:27017/moviesdb';
 
-const { JWT_SECRET = 'dev-secret', MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
-
-module.exports = {
-  JWT_SECRET,
-  MONGO_URL,
-};
+module.exports = DB_ADDRESS;
