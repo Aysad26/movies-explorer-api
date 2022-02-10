@@ -2,7 +2,7 @@ const express = require('express');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const cors = require('cors');
+//const cors = require('cors');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const routes = require('./routes');
@@ -16,7 +16,7 @@ const {
 dotenv.config();
 const {
   NODE_ENV,
-  PORT = 3030,
+  PORT = 3000,
   DB_URL,
 } = process.env;
 
@@ -30,10 +30,10 @@ mongoose.connect(NODE_ENV === 'production' ? DB_URL : 'mongodb://localhost:27017
   useUnifiedTopology: true,
 });
 
-app.use(cors({
-  origin: NODE_ENV === 'production' ? 'https://https://mesto.aysad26.nomoredomains.work' : 'http://localhost:3000',
-  credentials: true,
-}));
+//app.use(cors({
+ // origin: NODE_ENV === 'production' ? 'https://https://mesto.aysad26.nomoredomains.work' : 'http://localhost:3000',
+ // credentials: true,
+//}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
