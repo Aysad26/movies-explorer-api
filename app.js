@@ -6,7 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const routes = require('./routes');
-const errorsHandler = require('./middlewares/errorsHandler');
+const errorsHandler = require('./middlewares/errors');
 const limiter = require('./middlewares/rateLimiter');
 const {
   requestLogger,
@@ -16,7 +16,7 @@ const {
 dotenv.config();
 const {
   NODE_ENV,
-  PORT = 3030,
+  PORT = 3000,
   DB_URL,
 } = process.env;
 
@@ -30,10 +30,7 @@ mongoose.connect(NODE_ENV === 'production' ? DB_URL : 'mongodb://localhost:27017
   useUnifiedTopology: true,
 });
 
-app.use(cors({
-  origin: NODE_ENV === 'production' ? 'https://mesto.aysad26.nomoredomains.work' : 'http://localhost:3000',
-  credentials: true,
-}));
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
