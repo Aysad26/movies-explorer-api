@@ -35,23 +35,19 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  const owner = req.user._id;
-  Movie
-    .findById({ _id: req.params.movieId }).select('+owner')
-    .orFail(() => new NotFoundError('Нет такой карточки'))
+  Movie.findById(req.params.movieId)
+    .orFail(new NotFoundError('Нет такой карточки'))
     .then((movie) => {
-      if (!movie.owner.equals(owner)) {
-        next(new ForbiddenError('Нет прав на удаление карточки'));
-      } else {
-        Movie.deleteOne(movie)
-          .then(() => res.send({ message: 'Карточка удалена' }));
+      if (req.user._id.toString() === movie.owner.toString()) {
+        return movie.remove()
+          .then(() => res.status(200).send({ message: 'Карточка удалена' }));
       }
+      throw new ForbiddenError ('Нельзя удалять чужой фильм')
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
         next(new ValidationError('Невалидный id фильма'));
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
