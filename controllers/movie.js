@@ -34,20 +34,24 @@ module.exports.createMovie = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-module.exports.deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
-    .orFail(new NotFoundError('Нет такой карточки'))
-    .then((movie) => {
-      if (req.user._id.toString() === movie.owner.toString()) {
-        return movie.remove()
-          .then(() => res.status(200).send({ message: 'Карточка удалена' }));
-      }
-      throw new ForbiddenError ('Нельзя удалять чужой фильм')
-    })
-    .catch((err) => {
-      if (err.kind === 'ObjectId') {
-        next(new ValidationError('Невалидный id фильма'));
-      }
-      next(err);
-    });
-};
+
+    module.exports.deleteMovie = (req, res, next) => {
+      Movie.findById(req.params.movieId).select('+owner')
+        .orFail(new NotFoundError(movieIdNotFoundErrorText))
+        .then((movie) => {
+          if (req.user._id === movie.owner.toString()) {
+            movie.remove()
+              .then((deletedMovie) => res.send(deletedMovie))
+              .catch(next);
+          } else {
+            throw new ForbiddenError(forbiddenErrorText);
+          }
+        })
+        .catch((err) => {
+          if (err.kind === 'ObjectId') {
+            throw new ValidationError(idValidationErrorText);
+          }
+          throw err;
+        })
+        .catch(next);
+    }
