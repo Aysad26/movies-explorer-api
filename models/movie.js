@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const { linkErrorText } = require('../constants/constants');
 
-const movieSchema = mongoose.Schema({
+const movieSchema = new mongoose.Schema({
   country: {
     type: String,
     required: true,
@@ -15,7 +16,7 @@ const movieSchema = mongoose.Schema({
     required: true,
   },
   year: {
-    type: Number,
+    type: String,
     required: true,
   },
   description: {
@@ -29,6 +30,7 @@ const movieSchema = mongoose.Schema({
       validator(url) {
         return validator.isURL(url);
       },
+      message: linkErrorText,
     },
   },
   trailer: {
@@ -38,6 +40,7 @@ const movieSchema = mongoose.Schema({
       validator(url) {
         return validator.isURL(url);
       },
+      message: linkErrorText,
     },
   },
   thumbnail: {
@@ -47,12 +50,14 @@ const movieSchema = mongoose.Schema({
       validator(url) {
         return validator.isURL(url);
       },
+      message: linkErrorText,
     },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     ref: 'user',
+    required: true,
+    select: false,
   },
   movieId: {
     type: Number,

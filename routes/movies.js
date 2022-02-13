@@ -1,17 +1,9 @@
-const router = require('express')
-  .Router();
-const {
-  validateMovie,
-  validateMovieId,
-} = require('../middlewares/validation');
-const {
-  getMovies,
-  createMovie,
-  deleteMovie,
-} = require('../controllers/movies');
+const movies = require('express').Router();
+const { getMovies, createMovie, deleteMovie } = require('../controllers/movies');
+const { moviesAddValidation, moviesDeleteValidation } = require('../middlewares/validator');
 
-router.get('/', getMovies); // возвращает все сохранённые пользователем фильмы
-router.post('/', validateMovie, createMovie); // создаёт фильм с переданными в теле данными
-router.delete('/:movieId', validateMovieId, deleteMovie); // удаляет сохранённый фильм по id
+movies.get('/', getMovies);
+movies.post('/', moviesAddValidation, createMovie);
+movies.delete('/:movieId', moviesDeleteValidation, deleteMovie);
 
-module.exports = router;
+module.exports = movies;
