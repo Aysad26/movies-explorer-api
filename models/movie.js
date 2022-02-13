@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
-const linkRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
-
-const movieSchema = new mongoose.Schema({
+const movieSchema = mongoose.Schema({
   country: {
     type: String,
     required: true,
@@ -16,7 +15,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   year: {
-    type: String,
+    type: Number,
     required: true,
   },
   description: {
@@ -24,39 +23,36 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    required: true,
     type: String,
+    required: true,
     validate: {
-      validator(link) {
-        return linkRegex.test(link);
+      validator(url) {
+        return validator.isURL(url);
       },
-      message: 'Введите корректный URL изображения',
     },
   },
   trailer: {
-    required: true,
     type: String,
+    required: true,
     validate: {
-      validator(link) {
-        return linkRegex.test(link);
+      validator(url) {
+        return validator.isURL(url);
       },
-      message: 'Введите корректный URL трейлера',
     },
   },
   thumbnail: {
-    required: true,
     type: String,
+    required: true,
     validate: {
-      validator(link) {
-        return linkRegex.test(link);
+      validator(url) {
+        return validator.isURL(url);
       },
-      message: 'Введите корректный URL изображения',
     },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
     required: true,
+    ref: 'user',
   },
   movieId: {
     type: Number,
